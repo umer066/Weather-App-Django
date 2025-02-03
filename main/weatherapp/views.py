@@ -21,35 +21,75 @@ def home(request):
     url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}'
     #   convert temp into celsius and farenheit's
     PARAMS = {'units':'metric'}  
-
+ 
 
 # using try and except statement to handle key-error 
     try:
 
-        data = requests.get(url,params=PARAMS).json()
+        response = requests.get(url, params=PARAMS, timeout=10)
+        response.raise_for_status()
 
-        # data description of weather
+        data = response.json()
+
+        # data description of weather, icon and temperature
         description = data ['weather'][0]['description']
-        # description of weather icon 
         icon = data ['weather'][0]['icon']
-         # description of temperature of weather 
         temp = data['main']['temp']
 
-
         day = datetime.date.today()
         time = datetime.datetime.now().time()
 
 
-        return render(request,'index.html', {'description': description, 'icon':icon, 'temp':temp, 'day':day, 'time':time, 'city':city, 'exception_occured':False})
+        return render(request,'index.html', {
+            'description': description, 
+            'icon':icon,
+            'temp':temp,
+            'day':day,
+            'time':time, 
+            'city':city,
+            'exception_occured':False})
     
-    except:
-        exception_occcured= True
-        messages.error(request,'Entered city is not in System!, Try another city')
-        day = datetime.date.today()
-        time = datetime.datetime.now().time()
+   
+    except requests.exceptions.Timeout:
+        messages.error(request, "The request time out. PLease try again later.")
+        exception_occurred = True
 
-        return render(request,'index.html', {'description': 'clear sky', 'icon':'01d', 'temp':'25', 'day':day, 'time':time, 'city':'Enter another city', 'exception_occured':True})
+    except requests.exceptions.ConnectionError:
+        messages.error(request, "There was a connection error.  Please check your internet connection.")
+        exception_occurred = True
+
+    except requests.exceptions.HTTPError as http_err:
+        if response.status_code == 404:
+            messages.error(request, "The requested city was not found.")
+        else:
+            messages.error(request, f"HTTP error occurred: {http_err}")
+        exception_occurred = True
+
+    except requests.exceptions.RequestException as req_err:
+        messages.error(request,f"An error occurred while fetching data: {req_err}")
+        exception_occcured = True
+
+    except KeyError as key_err:
+        messages.error(request, f"Excepted data not found: {key_err}. Please try another city.")
+        exception_occcured = True
+
+    except ValueError :
+        messages.error(request, "Invalid response received from the server.")
+        exception_occcured = True
+
+    except  Exception as err:
+        messages.error(request, f"An excepted error occurred: {err}")
+        exception_occcured == True
 
 
+    day = datetime.date.today()
+    time = datetime.datetime.now().time()
 
-    
+    return render(request,'index.html', {
+        'description': 'N/A', 
+        'icon':'01d', 
+        'temp':'N/A', 
+        'day':day, 
+        'time':time, 
+        'city':'Enter another city', 
+        'exception_occured': True})

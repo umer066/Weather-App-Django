@@ -21,7 +21,7 @@ Technologies Used:-
 Installation:-
 - Clone the repository:
 
-git clone https://github.com/yourusername/weather-app.git
+git clone https://github.com/umer066/Project-2.git
 
 - Navigate to the project directory:
 
