@@ -8,9 +8,9 @@
   --blue-2: #4475ef;
   --shadow: rgba(3, 46, 87, 0.2);
 }
-body{
-  background: linear-gradient(270deg, var(--blue-1), var(--blue-2));
-}
+/* body{
+  background: linear-gradient(270deg, var(--blue-1), var(--blue-2)); */
+/* } */
 *{
 margin:0;
 padding:0;
