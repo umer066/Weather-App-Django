@@ -17,21 +17,21 @@
 
 
   <div class="container" style=" margin-left: 200px;">
-    <h1 class="heading">Weather App</h1>
+    <h1 class="heading"> Weather App </h1>
     
-    <form method="POST">
+    <form method="POST" action="/">
       {% csrf_token %}
       <input type="text" name="city" placeholder="Enter City">
       <button type="submit" class="btn">Search</button>
     </form>
     <div class="weather">
       <div class="left">
-        <h2 class="temp">{{ temp }}&#176; C</h2>
+        <h2 class="temp">{{ temp }}&#176; C </h2>
         <h2 class="city">{{ city }}</h2>
       </div>
       <div class="right">
         <div class="icon">
-          <p><img src="http://openweathermap.org/img/w/{{ icon }}.png" width="120px"></p>
+          <p><img src="http://openweathermap.org/img/w/{{ icon }}.png" width="120px" alt="icon"></p>
         </div>
         <div class="condition">
           <p>{{ description }} </p>
@@ -42,15 +42,19 @@
     </div>
   </div>
 
-{% comment %} writing js to over-come key-error exception {% endcomment %}
+
 {% if exception_occurred %}
     <script>
         window.onload = function() {
-            alert('error fetching weather data for '{{ city }}'. Showing weather data for 'city not available' instead.');
+          var cityName = "{{ city }}";
+          if (!cityName) {
+            cityName = "Enter another city";
+          }
+
+          alert("Error fetching weather data for '" + cityName + "'. Showing weather data for '" + cityName + "' instead.");
         }
     </script>
 {% endif %} 
 
 </body>
 </html>
-
