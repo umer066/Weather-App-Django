@@ -1,0 +1,5 @@
+Requirements:-
+
+django-5.1.5
+pip-request-2.3
+python 3.12
